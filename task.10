@@ -1,0 +1,132 @@
+
+# Campus Event Financial Planning System
+
+import math
+
+# Event budget details
+venue_cost = 15000
+equipment_cost = 8000
+transport_cost = 5000
+
+# Per-participant costs
+catering_per_person = 250
+certificate_per_person = 50
+
+# Financial planning details
+expected_participants = 100
+registration_fee = 300
+sponsorship_received = 20000
+
+
+def calculate_event_budget():
+    # Fixed costs
+    fixed_cost = venue_cost + equipment_cost + transport_cost
+
+    # Variable costs for expected participants
+    catering_cost = catering_per_person * expected_participants
+    certificate_cost = certificate_per_person * expected_participants
+
+    variable_cost = catering_cost + certificate_cost
+    total_cost = fixed_cost + variable_cost
+
+    # Calculate available funds
+    registration_income = registration_fee * expected_participants
+    total_funds = registration_income + sponsorship_received
+
+    # Calculate sponsorship shortfall
+    shortfall = max(0, total_cost - total_funds)
+
+    # Calculate surplus
+    surplus = max(0, total_funds - total_cost)
+
+    # Minimum registrations needed to break even
+    # Revenue = sponsorship + registration fee * participants
+    # Cost = fixed cost + variable cost per participant * participants
+    contribution_per_person = (
+        registration_fee
+        - catering_per_person
+        - certificate_per_person
+    )
+
+    if contribution_per_person > 0:
+        registrations_needed = max(
+            0,
+            math.ceil(
+                (fixed_cost - sponsorship_received)
+                / contribution_per_person
+            )
+        )
+    elif fixed_cost <= sponsorship_received:
+        registrations_needed = 0
+    else:
+        registrations_needed = None
+
+    return {
+        "fixed_cost": fixed_cost,
+        "catering_cost": catering_cost,
+        "certificate_cost": certificate_cost,
+        "variable_cost": variable_cost,
+        "total_cost": total_cost,
+        "registration_income": registration_income,
+        "total_funds": total_funds,
+        "shortfall": shortfall,
+        "surplus": surplus,
+        "registrations_needed": registrations_needed,
+        "contribution_per_person": contribution_per_person
+    }
+
+
+# Generate financial report
+report = calculate_event_budget()
+
+print("=" * 60)
+print("       CAMPUS EVENT FINANCIAL PLANNING")
+print("=" * 60)
+
+print("\n1. EVENT EXPENSES")
+print("-" * 60)
+print(f"Venue Cost            : Rs.{venue_cost:.2f}")
+print(f"Equipment Cost        : Rs.{equipment_cost:.2f}")
+print(f"Transport Cost        : Rs.{transport_cost:.2f}")
+print(f"Catering Cost         : Rs.{report['catering_cost']:.2f}")
+print(f"Certificate Cost      : Rs.{report['certificate_cost']:.2f}")
+print(f"Total Fixed Cost      : Rs.{report['fixed_cost']:.2f}")
+print(f"Total Variable Cost   : Rs.{report['variable_cost']:.2f}")
+print(f"Total Event Cost      : Rs.{report['total_cost']:.2f}")
+
+print("\n2. EVENT INCOME")
+print("-" * 60)
+print(f"Expected Participants : {expected_participants}")
+print(f"Registration Fee      : Rs.{registration_fee:.2f}")
+print(f"Registration Income   : Rs.{report['registration_income']:.2f}")
+print(f"Sponsorship Received  : Rs.{sponsorship_received:.2f}")
+print(f"Total Available Funds : Rs.{report['total_funds']:.2f}")
+
+print("\n3. FINANCIAL ANALYSIS")
+print("-" * 60)
+print(f"Contribution per Person: Rs.{report['contribution_per_person']:.2f}")
+
+if report["shortfall"] > 0:
+    print(f"Sponsorship Shortfall : Rs.{report['shortfall']:.2f}")
+    print("Status                : Additional funding required")
+else:
+    print("Sponsorship Shortfall : Rs.0.00")
+    print(f"Financial Surplus     : Rs.{report['surplus']:.2f}")
+    print("Status                : Budget covered")
+
+print("\n4. BREAK-EVEN ANALYSIS")
+print("-" * 60)
+
+if report["registrations_needed"] is not None:
+    print(
+        "Minimum Registrations Needed:",
+        report["registrations_needed"]
+    )
+else:
+    print(
+        "Break-even is not possible with the current "
+        "registration fee and sponsorship."
+    )
+
+print("\nFinancial analysis completed successfully.")
+print("=" * 60)
